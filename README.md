@@ -168,7 +168,7 @@ e boas práticas do desenvolvimento de software.
 ## Autor
 Guilherme Vicente Figueira: RA 1992017
 Gabriel Forconi: RA 1990563
-Issac Castro Moreira Cavalcante: RA 1993141
+Isaque Castro Moreira Cavalcante: RA 1993141
 João Pedro Messias: RA 1993720
 
 ## Fluxograma
