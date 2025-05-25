@@ -170,3 +170,7 @@ Guilherme Vicente Figueira: RA 1992017
 Gabriel Forconi: RA 1990563
 Issac Castro Moreira Cavalcante: RA 1993141
 João Pedro Messias: RA 1993720
+
+## Fluxograma
+
+https://excalidraw.com/#json=-_-MHWMRl9NoS3OISSlgz,N65q3L9wvBy0Mja54ReNMQ
