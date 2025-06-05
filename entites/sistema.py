@@ -51,6 +51,9 @@ class ECommerce:
             if not produto_existe(self.produtos, produto_id):
                 print("Produto não encontrado!")
                 return
+            if quantidade <= 0:  # CORREÇÃO pos prova: Verifica se quantidade é positiva
+                print("Quantidade inválida! Deve ser maior que zero.")
+                return
             if not tem_estoque(self.produtos, produto_id, quantidade):
                 print("Estoque insuficiente!")
                 return
