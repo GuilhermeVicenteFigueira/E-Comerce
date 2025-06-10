@@ -2,7 +2,6 @@ from entites.sistema import ECommerce
 
 def main():
     loja = ECommerce()
-    
     print("=== BEM-VINDO À TECHSTORE ===")
     
     while True:
@@ -17,6 +16,7 @@ def main():
         print("8. Adicionar produto aos favoritos")
         print("9. Remover produto dos favoritos")
         print("10. Listar favoritos")
+        print("11. Adicionar novo produto")
         print("0. Sair")
         
         opcao = input("Escolha uma opção: ")
@@ -50,6 +50,11 @@ def main():
                 print("ID inválido!")
         elif opcao == '10':
             loja.listar_favoritos()
+        elif opcao == '11':
+            if loja.adicionar_produto():
+                print("Produto adicionado com sucesso!")
+            else:
+                print("Falha ao adicionar produto.")
         elif opcao == '0':
             print("Obrigado por usar nossa loja!")
             break

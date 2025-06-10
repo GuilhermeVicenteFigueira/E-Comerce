@@ -1,5 +1,5 @@
 from .carrinho import Carrinho
-from .produtos import criar_produtos, mostrar_produtos, produto_existe, tem_estoque, atualizar_estoque
+from .produtos import criar_produtos, mostrar_produtos, produto_existe, tem_estoque, atualizar_estoque, adicionar_produto
 from .historico import Historico
 from .pedidos import FilaPedidos
 from .favoritos import ListaFavoritos
@@ -42,6 +42,13 @@ class ECommerce:
         for pid in ids:
             print(f"ID {pid}: {self.produtos[pid]['nome']}")
 
+    def adicionar_produto(self):
+        """Adiciona um novo produto ao sistema"""
+        if adicionar_produto(self.produtos, self.categorias):
+            self.historico.adicionar("Novo produto adicionado ao sistema")
+            return True
+        return False
+
     def adicionar_ao_carrinho(self):
         # Adiciona um produto ao carrinho, se existir e houver estoque
         mostrar_produtos(self.produtos)
@@ -51,8 +58,8 @@ class ECommerce:
             if not produto_existe(self.produtos, produto_id):
                 print("Produto não encontrado!")
                 return
-            if quantidade <= 0:  # CORREÇÃO pos prova: Verifica se quantidade é positiva
-                print("Quantidade inválida! Deve ser maior que zero.")
+            if quantidade <= 0:
+                print("Quantidade deve ser maior que zero!")
                 return
             if not tem_estoque(self.produtos, produto_id, quantidade):
                 print("Estoque insuficiente!")
