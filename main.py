@@ -18,7 +18,6 @@ def main():
         print("10. Listar favoritos")
         print("11. Adicionar novo produto")
         print("0. Sair")
-        
         opcao = input("Escolha uma opção: ")
         
         if opcao == '1':
