@@ -1,4 +1,5 @@
 from entites.sistema import ECommerce
+from entites.produtos import mostrar_produtos
 
 def main():
     loja = ECommerce()
@@ -17,12 +18,12 @@ def main():
         print("8. Adicionar produto aos favoritos")
         print("9. Remover produto dos favoritos")
         print("10. Listar favoritos")
+        print("11. Ver produtos mais vendidos")
         print("0. Sair")
         
         opcao = input("Escolha uma opção: ")
         
         if opcao == '1':
-            from entites.produtos import mostrar_produtos
             mostrar_produtos(loja.produtos)
         elif opcao == '2':
             loja.adicionar_ao_carrinho()
@@ -50,6 +51,8 @@ def main():
                 print("ID inválido!")
         elif opcao == '10':
             loja.listar_favoritos()
+        elif opcao == '11':
+            loja.ver_mais_vendidos()
         elif opcao == '0':
             print("Obrigado por usar nossa loja!")
             break

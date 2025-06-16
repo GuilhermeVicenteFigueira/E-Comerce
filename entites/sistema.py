@@ -1,24 +1,24 @@
-from .carrinho import Carrinho
-from .produtos import criar_produtos, mostrar_produtos, produto_existe, tem_estoque, atualizar_estoque
-from .historico import Historico
-from .pedidos import FilaPedidos
-from .favoritos import ListaFavoritos
+from entites.carrinho import Carrinho
+from entites.produtos import criar_produtos, produto_existe, tem_estoque, atualizar_estoque
+from entites.historico import Historico
+from entites.pedidos import FilaPedidos
+from entites.favoritos import ListaFavoritos
+from entites.mais_vendidos import MaisVendidos
 
 class ECommerce:
     def __init__(self):
-        # Inicializa os dados principais da loja
         self.produtos = criar_produtos()
+        self.vendas_por_produto = {}
         self.categorias = {"Eletrônicos", "Acessórios"}
         self.info_loja = ("TechStore", "2025", "1.0")
 
-        # Instancia os módulos principais do sistema
         self.carrinho = Carrinho()
         self.historico = Historico()
         self.pedidos = FilaPedidos()
         self.favoritos = ListaFavoritos()
+        self.mais_vendidos = MaisVendidos()
 
     def adicionar_favorito(self, produto_id):
-        # Adiciona produto aos favoritos, se existir
         if not produto_existe(self.produtos, produto_id):
             print("Produto não existe para adicionar aos favoritos.")
             return
@@ -26,14 +26,12 @@ class ECommerce:
         print(f"Produto {produto_id} adicionado aos favoritos.")
 
     def remover_favorito(self, produto_id):
-        # Remove produto dos favoritos
         if self.favoritos.remover(produto_id):
             print(f"Produto {produto_id} removido dos favoritos.")
         else:
             print("Produto não estava na lista de favoritos.")
 
     def listar_favoritos(self):
-        # Lista todos os produtos favoritos
         ids = self.favoritos.listar()
         if not ids:
             print("Nenhum favorito adicionado.")
@@ -42,26 +40,26 @@ class ECommerce:
         for pid in ids:
             print(f"ID {pid}: {self.produtos[pid]['nome']}")
 
-    def adicionar_ao_carrinho(self):
-        # Adiciona um produto ao carrinho, se existir e houver estoque
-        mostrar_produtos(self.produtos)
-        try:
-            produto_id = int(input("\nID do produto: "))
-            quantidade = int(input("Quantidade: "))
-            if not produto_existe(self.produtos, produto_id):
-                print("Produto não encontrado!")
+    def adicionar_ao_carrinho(self, produto_id=None, quantidade=None):
+        if produto_id is None:
+            try:
+                produto_id = int(input("Digite o ID do produto para adicionar ao carrinho: "))
+                quantidade = int(input("Digite a quantidade: "))
+            except ValueError:
+                print("ID ou quantidade inválidos!")
                 return
-            if not tem_estoque(self.produtos, produto_id, quantidade):
-                print("Estoque insuficiente!")
-                return
-            self.carrinho.adicionar(produto_id, quantidade)
-            self.historico.adicionar(f"Adicionado: {self.produtos[produto_id]['nome']}")
-            print("Produto adicionado ao carrinho!")
-        except ValueError:
-            print("Entrada inválida! Digite apenas números.")
+        
+        if not produto_existe(self.produtos, produto_id):
+            print("Produto não encontrado!")
+            return
+        if not tem_estoque(self.produtos, produto_id, quantidade):
+            print("Estoque insuficiente!")
+            return
+        self.carrinho.adicionar(produto_id, quantidade)
+        self.historico.adicionar(f"Adicionado: {self.produtos[produto_id]['nome']}")
+        print("Produto adicionado ao carrinho!")
 
     def ver_carrinho(self):
-        # Exibe o conteúdo do carrinho e calcula o total
         print("\n=== CARRINHO ===")
         if self.carrinho.esta_vazio():
             print("Carrinho vazio!")
@@ -79,21 +77,19 @@ class ECommerce:
         print(f"TOTAL: R$ {total:.2f}")
         return total
 
-    def finalizar_compra(self):
-        # Finaliza a compra, aplica desconto e atualiza estoque
+    def finalizar_compra(self, confirmar=True):
         total = self.ver_carrinho()
         if total == 0:
             return
-        nome_loja, _, _ = self.info_loja
         if total >= 500:
             desconto = 50.00
             total -= desconto
             print(f"\nVocê ganhou um desconto de R$ {desconto:.2f}!")
         print(f"Valor total: R$ {total:.2f}")
-        confirmar = input("Quer finalizar a compra? (s/n): ").lower()
-        if confirmar == 's':
+        if confirmar:
             for produto_id, quantidade in self.carrinho.listar():
                 atualizar_estoque(self.produtos, produto_id, quantidade)
+                self.mais_vendidos.registrar_venda(produto_id, quantidade)
             pedido_id = self.pedidos.adicionar_pedido(total, self.carrinho.listar())
             self.historico.adicionar(f"Compra finalizada - R$ {total:.2f}")
             self.carrinho.limpar()
@@ -101,8 +97,11 @@ class ECommerce:
         else:
             print("Compra cancelada.")
 
+    def ver_mais_vendidos(self):
+        print("\n=== Produtos Mais Vendidos ===")
+        self.mais_vendidos.listar_mais_vendidos(self.produtos)
+
     def ver_historico(self):
-        # Exibe as últimas ações realizadas pelo usuário
         print("\n=== Histórico de ações ===")
         acoes = self.historico.ver_ultimas()
         if not acoes:
@@ -112,7 +111,6 @@ class ECommerce:
             print(f"{i}. {acao}")
 
     def processar_pedido(self):
-        # Processa o próximo pedido na fila
         print("\n=== Processar pedidos ===")
         if self.pedidos.esta_vazia():
             print("Nenhum pedido pendente.")
@@ -123,7 +121,6 @@ class ECommerce:
         self.historico.adicionar(f"Processado: Pedido #{pedido_id}")
 
     def ver_info_sistema(self):
-        # Exibe informações da loja
         print("\n=== Informação da loja ===")
         nome_loja, ano, versao = self.info_loja
         print(f"Loja: {nome_loja}")
